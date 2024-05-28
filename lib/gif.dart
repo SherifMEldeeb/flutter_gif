@@ -7,6 +7,7 @@
 
 library gif;
 
+import 'dart:ffi';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -59,6 +60,7 @@ class Gif extends StatefulWidget {
 
   /// Called when gif frames fetch is completed.
   final VoidCallback? onFetchCompleted;
+  final VoidCallback? onFinishPlayOnce;
 
   final double? width;
   final double? height;
@@ -98,6 +100,7 @@ class Gif extends StatefulWidget {
     this.autostart = Autostart.no,
     this.placeholder,
     this.onFetchCompleted,
+    this.onFinishPlayOnce,
     this.semanticLabel,
     this.excludeFromSemantics = false,
     this.width,
@@ -253,7 +256,7 @@ class _GifState extends State<Gif> with SingleTickerProviderStateMixin {
       if (widget.autostart == Autostart.loop) {
         _controller.repeat();
       } else {
-        _controller.forward();
+        _controller.forward().then((_) => widget.onFinishPlayOnce?.call());
       }
     }
   }
